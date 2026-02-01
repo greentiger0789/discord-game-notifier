@@ -1,0 +1,30 @@
+{
+    "error": {
+        "discord_token_missing": "❌ Error: DISCORD_TOKEN is not set",
+        "target_vc_id_missing": "❌ Error: TARGET_VC_ID is not set",
+        "text_channel_id_missing": "❌ Error: TEXT_CHANNEL_ID is not set",
+        "client": "❌ Client error:",
+        "channel_not_found": "❌ Error: Text channel ({{channelId}}) not found",
+        "channel_not_text": "❌ Error: {{channelId}} is not a text channel (type: {{type}})",
+        "message_send_failed": "❌ Message send error ({{gameName}}):",
+        "voice_state_update_failed": "❌ Error in voiceStateUpdate event:",
+        "unhandled_rejection": "❌ Unhandled Promise Rejection:",
+        "uncaught_exception": "❌ Uncaught exception:",
+        "login_failed": "❌ Login failed:"
+    },
+    "success": {
+        "login": "✅ Login successful: {{userTag}}"
+    },
+    "warning": {
+        "default": "⚠️ Warning:"
+    },
+    "info": {
+        "notification_cleared": "🧹 Notification record for {{gameName}} cleared ({{displayName}} finished playing)",
+        "already_notified": "⏭️ {{gameName}} already notified ({{userId}})",
+        "shutting_down_sigterm": "🛑 SIGTERM received, shutting down...",
+        "shutting_down_sigint": "🛑 SIGINT received, shutting down..."
+    },
+    "message": {
+        "gaming": "🎮 **{{displayName}}** is playing **{{gameName}}**!\nWant to join?"
+    }
+}

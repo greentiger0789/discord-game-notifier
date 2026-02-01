@@ -5,23 +5,41 @@ import {
     GatewayIntentBits
 } from 'discord.js';
 import 'dotenv/config';
+import { readFileSync } from 'fs';
+import i18next from 'i18next';
+
+// i18nの初期化
+const language = process.env.LANGUAGE || 'ja';
+const en = JSON.parse(readFileSync('./locales/en.json', 'utf-8'));
+const ja = JSON.parse(readFileSync('./locales/ja.json', 'utf-8'));
+
+i18next.init({
+    lng: language,
+    fallbackLng: 'en',
+    resources: {
+        en: { translation: en },
+        ja: { translation: ja }
+    }
+});
+
+const t = i18next.t.bind(i18next);
 
 const TARGET_VC_ID = process.env.TARGET_VC_ID;
 const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
 
 // 環境変数の検証
 if (!process.env.DISCORD_TOKEN) {
-    console.error('❌ エラー: DISCORD_TOKEN が設定されていません');
+    console.error(t('error.discord_token_missing'));
     process.exit(1);
 }
 
 if (!TARGET_VC_ID) {
-    console.error('❌ エラー: TARGET_VC_ID が設定されていません');
+    console.error(t('error.target_vc_id_missing'));
     process.exit(1);
 }
 
 if (!TEXT_CHANNEL_ID) {
-    console.error('❌ エラー: TEXT_CHANNEL_ID が設定されていません');
+    console.error(t('error.text_channel_id_missing'));
     process.exit(1);
 }
 
@@ -38,15 +56,15 @@ const client = new Client({
 const notifiedGames = new Map();
 
 client.once('clientReady', () => {
-    console.log(`✅ ログイン成功: ${client.user.tag}`);
+    console.log(t('success.login', { userTag: client.user.tag }));
 });
 
 client.on('error', (error) => {
-    console.error('❌ クライアントエラー:', error);
+    console.error(t('error.client'), error);
 });
 
 client.on('warn', (warning) => {
-    console.warn('⚠️  警告:', warning);
+    console.warn(t('warning.default'), warning);
 });
 
 client.on('voiceStateUpdate', (oldState, newState) => {
@@ -66,7 +84,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
                 for (const [gameName, notified] of notifiedGames.entries()) {
                     if (notified.userId === member.id) {
                         notifiedGames.delete(gameName);
-                        console.log(`🧹 ${gameName} の通知記録をクリア (${member.displayName} がゲーム終了)`);
+                        console.log(t('info.notification_cleared', { gameName, displayName: member.displayName }));
                     }
                 }
             }
@@ -97,7 +115,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
                     // 同じゲームが既に通知されているかチェック
                     const notified = notifiedGames.get(retry.name);
                     if (notified) {
-                        console.log(`⏭️  ${retry.name} は既に通知済み (${notified.userId})`);
+                        console.log(t('info.already_notified', { gameName: retry.name, userId: notified.userId }));
                         return;
                     }
 
@@ -110,9 +128,9 @@ client.on('voiceStateUpdate', (oldState, newState) => {
                     const channel = newState.guild.channels.cache.get(TEXT_CHANNEL_ID);
                     if (channel?.type === ChannelType.GuildText) {
                         channel.send(
-                            `🎮 **${member.displayName}** が **${retry.name}** をプレイ中！\n一緒にやらない？`
+                            t('message.gaming', { displayName: member.displayName, gameName: retry.name })
                         ).catch((error) => {
-                            console.error(`❌ メッセージ送信エラー (${retry.name}):`, error);
+                            console.error(t('error.message_send_failed', { gameName: retry.name }), error);
                         });
                     }
                 }, 3000);
@@ -122,7 +140,7 @@ client.on('voiceStateUpdate', (oldState, newState) => {
             // 同じゲームが既に通知されているかチェック
             const notified = notifiedGames.get(playing.name);
             if (notified) {
-                console.log(`⏭️  ${playing.name} は既に通知済み (${notified.userId})`);
+                console.log(t('info.already_notified', { gameName: playing.name, userId: notified.userId }));
                 return;
             }
 
@@ -136,49 +154,49 @@ client.on('voiceStateUpdate', (oldState, newState) => {
                 newState.guild.channels.cache.get(TEXT_CHANNEL_ID);
 
             if (!textChannel) {
-                console.error(`❌ エラー: テキストチャンネル (${TEXT_CHANNEL_ID}) が見つかりません`);
+                console.error(t('error.channel_not_found', { channelId: TEXT_CHANNEL_ID }));
                 return;
             }
 
             if (textChannel.type !== ChannelType.GuildText) {
-                console.error(`❌ エラー: ${TEXT_CHANNEL_ID} はテキストチャンネルではありません (型: ${textChannel.type})`);
+                console.error(t('error.channel_not_text', { channelId: TEXT_CHANNEL_ID, type: textChannel.type }));
                 return;
             }
 
             textChannel.send(
-                `🎮 **${member.displayName}** が **${playing.name}** をプレイ中！\n一緒にやらない？`
+                t('message.gaming', { displayName: member.displayName, gameName: playing.name })
             ).catch((error) => {
-                console.error(`❌ メッセージ送信エラー (${playing.name}):`, error);
+                console.error(t('error.message_send_failed', { gameName: playing.name }), error);
             });
         }
     } catch (error) {
-        console.error('❌ voiceStateUpdate イベント内でエラーが発生:', error);
+        console.error(t('error.voice_state_update_failed'), error);
     }
 });
 
 // グレースフルシャットダウン
 process.on('SIGTERM', () => {
-    console.log('🛑 SIGTERM受信、シャットダウン中...');
+    console.log(t('info.shutting_down_sigterm'));
     client.destroy();
     process.exit(0);
 });
 
 process.on('SIGINT', () => {
-    console.log('🛑 SIGINT受信、シャットダウン中...');
+    console.log(t('info.shutting_down_sigint'));
     client.destroy();
     process.exit(0);
 });
 
 // 予期しない例外ハンドリング
 process.on('unhandledRejection', (reason) => {
-    console.error('❌ ハンドルされない Promise Rejection:', reason);
+    console.error(t('error.unhandled_rejection'), reason);
 });
 
 process.on('uncaughtException', (err) => {
-    console.error('❌ キャッチされない例外:', err);
+    console.error(t('error.uncaught_exception'), err);
 });
 
 client.login(process.env.DISCORD_TOKEN).catch((error) => {
-    console.error('❌ ログイン失敗:', error);
+    console.error(t('error.login_failed'), error);
     process.exit(1);
 });
