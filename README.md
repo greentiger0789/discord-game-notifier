@@ -36,12 +36,16 @@ Discordの特定のボイスチャンネルに参加したユーザーがプレ�
 DISCORD_TOKEN=your_bot_token_here
 TARGET_VC_ID=target_voice_channel_id
 TEXT_CHANNEL_ID=text_channel_id_for_notifications
+LANGUAGE=ja
 ```
 
 **必須環境変数：**
 - `DISCORD_TOKEN`: Discord Bot Token
 - `TARGET_VC_ID`: 監視対象のボイスチャンネルID
 - `TEXT_CHANNEL_ID`: 通知先のテキストチャンネルID
+
+**オプション環境変数：**
+- `LANGUAGE`: 言語設定 (`ja` = 日本語, `en` = 英語, デフォルト: `ja`)
 
 ### 2. 依存関係のインストール
 
@@ -73,6 +77,7 @@ docker-compose up -d
 
 - **discord.js** v14.14.1 - Discord API クライアント
 - **dotenv** v16.4.1 - 環境変数管理
+- **i18next** v23.7.6 - 国際化（i18n）ライブラリ
 - **Node.js** 20 (Docker)
 
 ## 動作原理

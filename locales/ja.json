@@ -1,0 +1,30 @@
+{
+    "error": {
+        "discord_token_missing": "❌ エラー: DISCORD_TOKEN が設定されていません",
+        "target_vc_id_missing": "❌ エラー: TARGET_VC_ID が設定されていません",
+        "text_channel_id_missing": "❌ エラー: TEXT_CHANNEL_ID が設定されていません",
+        "client": "❌ クライアントエラー:",
+        "channel_not_found": "❌ エラー: テキストチャンネル ({{channelId}}) が見つかりません",
+        "channel_not_text": "❌ エラー: {{channelId}} はテキストチャンネルではありません (型: {{type}})",
+        "message_send_failed": "❌ メッセージ送信エラー ({{gameName}}):",
+        "voice_state_update_failed": "❌ voiceStateUpdate イベント内でエラーが発生:",
+        "unhandled_rejection": "❌ ハンドルされない Promise Rejection:",
+        "uncaught_exception": "❌ キャッチされない例外:",
+        "login_failed": "❌ ログイン失敗:"
+    },
+    "success": {
+        "login": "✅ ログイン成功: {{userTag}}"
+    },
+    "warning": {
+        "default": "⚠️ 警告:"
+    },
+    "info": {
+        "notification_cleared": "🧹 {{gameName}} の通知記録をクリア ({{displayName}} がゲーム終了)",
+        "already_notified": "⏭️ {{gameName}} は既に通知済み ({{userId}})",
+        "shutting_down_sigterm": "🛑 SIGTERM受信、シャットダウン中...",
+        "shutting_down_sigint": "🛑 SIGINT受信、シャットダウン中..."
+    },
+    "message": {
+        "gaming": "🎮 **{{displayName}}** が **{{gameName}}** をプレイ中！\n一緒にやらない？"
+    }
+}
