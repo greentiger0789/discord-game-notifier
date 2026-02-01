@@ -1,102 +1,104 @@
 # Discord Game Notifier
 
-Discordの特定のボイスチャンネルに参加したユーザーがプレイしているゲームを、テキストチャンネルに自動で通知するBot
+[📖 日本語版を見る](README.ja.md)
 
-## 機能
+A Discord Bot that automatically notifies users when someone joins a specific voice channel and is playing a game.
 
-- 📢 特定のボイスチャンネルへのユーザー入場を監視
-- 🎮 入場したユーザーがプレイ中のゲーム情報を取得
-- 💬 ゲーム情報を指定したテキストチャンネルに投稿
-- 🔄 重複通知の排除機能
-- 🧹 ボイスチャンネル退出時に通知記録をクリア
+## Features
 
-## 必要な環境
+- 📢 Monitor user entries to a specific voice channel
+- 🎮 Retrieve game information of users who are playing
+- 💬 Post game information to a designated text channel
+- 🔄 Duplicate notification prevention
+- 🧹 Clear notification records when users leave the voice channel
 
-- Node.js 20以上
-- Docker & Docker Compose（オプション）
-- Discordアカウント及びBot
+## Requirements
 
-## Discord Bot 設定（重要）
+- Node.js 20 or higher
+- Docker & Docker Compose (optional)
+- Discord Account and Bot
 
-本Botを正常に動作させるため、Discord Developer Portal で以下の設定が必要です。
+## Discord Bot Configuration (Important)
 
-### 必須 Gateway Intents
+To make this Bot work properly, you need to enable the following settings in the Discord Developer Portal.
+
+### Required Gateway Intents
 - ✅ Presence Intent
 - ✅ Server Members Intent
 
-これらを有効にしないと、ユーザーのゲーム情報（Presence）を取得できません。
+Without these enabled, the Bot will not be able to retrieve user game information (Presence).
 
-## セットアップ
+## Setup
 
-### 1. 環境変数の設定
+### 1. Configure Environment Variables
 
-`.env`ファイルをプロジェクトルートに作成し、以下の環境変数を設定してください：
+Create a `.env` file in the project root and set the following environment variables:
 
 ```env
 DISCORD_TOKEN=your_bot_token_here
 TARGET_VC_ID=target_voice_channel_id
 TEXT_CHANNEL_ID=text_channel_id_for_notifications
-LANGUAGE=ja
+LANGUAGE=en
 ```
 
-**必須環境変数：**
+**Required Environment Variables:**
 - `DISCORD_TOKEN`: Discord Bot Token
-- `TARGET_VC_ID`: 監視対象のボイスチャンネルID
-- `TEXT_CHANNEL_ID`: 通知先のテキストチャンネルID
+- `TARGET_VC_ID`: Target voice channel ID to monitor
+- `TEXT_CHANNEL_ID`: Text channel ID for notifications
 
-**オプション環境変数：**
-- `LANGUAGE`: 言語設定 (`ja` = 日本語, `en` = 英語, デフォルト: `ja`)
+**Optional Environment Variables:**
+- `LANGUAGE`: Language setting (`en` = English, `ja` = Japanese, default: `en`)
 
-### 2. 依存関係のインストール
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-## 実行
+## Running
 
-### ローカル実行
+### Local Execution
 
 ```bash
 npm start
 ```
 
-または
+or
 
 ```bash
 node index.js
 ```
 
-### Docker/Docker Composeでの実行
+### Docker/Docker Compose Execution
 
 ```bash
 docker-compose up -d
 ```
 
-## 使用技術
+## Technologies Used
 
-- **discord.js** v14.14.1 - Discord API クライアント
-- **dotenv** v16.4.1 - 環境変数管理
-- **i18next** v23.7.6 - 国際化（i18n）ライブラリ
+- **discord.js** v14.14.1 - Discord API Client
+- **dotenv** v16.4.1 - Environment Variable Management
+- **i18next** v23.7.6 - Internationalization (i18n) Library
 - **Node.js** 20 (Docker)
 
-## 動作原理
+## How It Works
 
-1. Botがボイスチャンネルの状態変更イベントを監視
-2. ユーザーが監視対象のボイスチャンネルに入場した時点で以下を実行：
-   - ユーザーのPresenceからアクティビティ情報を取得
-   - プレイ中のゲーム情報がある場合、テキストチャンネルに投稿
-   - 同じゲームが既に通知されている場合はスキップ
-3. ユーザーがボイスチャンネルから退出した際：
-   - ゲームをプレイしていない場合は通知記録をクリア
-   - ゲームをプレイしている場合は記録を保持
+1. The Bot monitors voice channel state change events
+2. When a user joins the target voice channel, it:
+   - Retrieves activity information from the user's Presence
+   - Posts the game information to the text channel if they're playing a game
+   - Skips if the same game has already been notified
+3. When a user leaves the voice channel:
+   - Clears the notification record if they're not playing a game
+   - Keeps the record if they're still playing a game
 
-## 注意事項
+## Notes
 
-- Presence遅延対策として、入場時に数秒の遅延を設けています
-- ボイスチャンネルの出入りを頻繁に繰り返すと、重複通知の可能性があります
-- BotがPresenceを読み取るには適切なDiscord Developer Portal設定が必要です
+- A few-second delay is implemented when joining to handle Presence delays
+- Frequent voice channel entries and exits may result in duplicate notifications
+- The Bot requires proper Discord Developer Portal configuration to read Presence
 
-## ライセンス
+## License
 
-MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照してください
+MIT License - See the [LICENSE](LICENSE) file for details
