@@ -73,6 +73,17 @@ node index.js
 docker-compose up -d
 ```
 
+### Run tests inside Docker locally
+
+To run tests inside a container, build the image from the project root and run `npm test` inside the container.
+
+```bash
+docker build -t discord-game-notifier:test .
+docker run --rm discord-game-notifier:test npm test
+```
+
+The test suite runs the checks in the `test/` directory (locale file smoke tests and unit tests for the voice handler).
+
 ## Technologies Used
 
 - **discord.js** v14.14.1 - Discord API Client

@@ -73,6 +73,17 @@ node index.js
 docker-compose up -d
 ```
 
+### ローカルでコンテナ内テストを実行する
+
+コンテナ内でテストを実行するには、プロジェクトルートでイメージをビルドして `npm test` を実行します。
+
+```bash
+docker build -t discord-game-notifier:test .
+docker run --rm discord-game-notifier:test npm test
+```
+
+テストは `test/` ディレクトリの簡易スモークテストを実行します（ロケールファイルの検証やハンドラのユニットテスト）。
+
 ## 使用技術
 
 - **discord.js** v14.14.1 - Discord API クライアント
