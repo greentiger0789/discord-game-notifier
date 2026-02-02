@@ -2,11 +2,11 @@
 
 [📖 日本語版を見る](README.ja.md)
 
-A Discord Bot that automatically notifies users when someone joins a specific voice channel and is playing a game.
+A Discord Bot that automatically notifies users when someone joins any voice channel and is playing a game.
 
 ## Features
 
-- 📢 Monitor user entries to a specific voice channel
+- 📢 Monitor user entries to any voice channel
 - 🎮 Retrieve game information of users who are playing
 - 💬 Post game information to a designated text channel
 - 🔄 Duplicate notification prevention
@@ -36,14 +36,12 @@ Create a `.env` file in the project root and set the following environment varia
 
 ```env
 DISCORD_TOKEN=your_bot_token_here
-TARGET_VC_ID=target_voice_channel_id
 TEXT_CHANNEL_ID=text_channel_id_for_notifications
 LANGUAGE=en
 ```
 
 **Required Environment Variables:**
 - `DISCORD_TOKEN`: Discord Bot Token
-- `TARGET_VC_ID`: Target voice channel ID to monitor
 - `TEXT_CHANNEL_ID`: Text channel ID for notifications
 
 **Optional Environment Variables:**

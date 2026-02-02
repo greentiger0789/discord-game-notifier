@@ -2,11 +2,11 @@
 
 [📖 English Version](README.md)
 
-Discordの特定のボイスチャンネルに参加したユーザーがプレイしているゲームを、テキストチャンネルに自動で通知するBot
+Discordの任意のボイスチャンネルに参加したユーザーがプレイしているゲームを、テキストチャンネルに自動で通知するBot
 
 ## 機能
 
-- 📢 特定のボイスチャンネルへのユーザー入場を監視
+- 📢 任意のボイスチャンネルへのユーザー入場を監視
 - 🎮 入場したユーザーがプレイ中のゲーム情報を取得
 - 💬 ゲーム情報を指定したテキストチャンネルに投稿
 - 🔄 重複通知の排除機能
@@ -36,14 +36,12 @@ Discordの特定のボイスチャンネルに参加したユーザーがプレ�
 
 ```env
 DISCORD_TOKEN=your_bot_token_here
-TARGET_VC_ID=target_voice_channel_id
 TEXT_CHANNEL_ID=text_channel_id_for_notifications
 LANGUAGE=ja
 ```
 
 **必須環境変数：**
 - `DISCORD_TOKEN`: Discord Bot Token
-- `TARGET_VC_ID`: 監視対象のボイスチャンネルID
 - `TEXT_CHANNEL_ID`: 通知先のテキストチャンネルID
 
 **オプション環境変数：**

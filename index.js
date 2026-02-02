@@ -24,17 +24,11 @@ i18next.init({
 
 const t = i18next.t.bind(i18next);
 
-const TARGET_VC_ID = process.env.TARGET_VC_ID;
 const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
 
 // 環境変数の検証
 if (!process.env.DISCORD_TOKEN) {
     console.error(t('error.discord_token_missing'));
-    process.exit(1);
-}
-
-if (!TARGET_VC_ID) {
-    console.error(t('error.target_vc_id_missing'));
     process.exit(1);
 }
 
@@ -67,108 +61,17 @@ client.on('warn', (warning) => {
     console.warn(t('warning.default'), warning);
 });
 
+import handleVoiceStateUpdate from './src/voiceHandler.js';
+
 client.on('voiceStateUpdate', (oldState, newState) => {
     try {
-        // ボイスチャンネルから退出時
-        if (oldState.channelId === TARGET_VC_ID && newState.channelId === null) {
-            const member = oldState.member;
-            if (!member?.presence) return;
-
-            const playing = member.presence.activities.find(
-                a => a.type === ActivityType.Playing
-            );
-
-            // ゲームをプレイしていない場合のみ記録をクリア
-            if (!playing) {
-                // このユーザーが記録されているゲームを全て削除
-                for (const [gameName, notified] of notifiedGames.entries()) {
-                    if (notified.userId === member.id) {
-                        notifiedGames.delete(gameName);
-                        console.log(t('info.notification_cleared', { gameName, displayName: member.displayName }));
-                    }
-                }
-            }
-            // ゲームをプレイしている場合は記録を保持（出入りしてもメッセージ送信なし）
-            return;
-        }
-
-        // ボイスチャンネルに入場時：通知を送信
-        if (
-            oldState.channelId === null &&
-            newState.channelId === TARGET_VC_ID
-        ) {
-            const member = newState.member;
-            if (!member?.presence) return;
-
-            const playing = member.presence.activities.find(
-                a => a.type === ActivityType.Playing
-            );
-
-            if (!playing) {
-                // Presence遅延対策：数秒後に再確認
-                setTimeout(() => {
-                    const retry = member.presence?.activities.find(
-                        a => a.type === ActivityType.Playing
-                    );
-                    if (!retry) return;
-
-                    // 同じゲームが既に通知されているかチェック
-                    const notified = notifiedGames.get(retry.name);
-                    if (notified) {
-                        console.log(t('info.already_notified', { gameName: retry.name, userId: notified.userId }));
-                        return;
-                    }
-
-                    // 通知記録に追加
-                    notifiedGames.set(retry.name, {
-                        userId: member.id,
-                        timestamp: Date.now()
-                    });
-
-                    const channel = newState.guild.channels.cache.get(TEXT_CHANNEL_ID);
-                    if (channel?.type === ChannelType.GuildText) {
-                        channel.send(
-                            t('message.gaming', { displayName: member.displayName, gameName: retry.name })
-                        ).catch((error) => {
-                            console.error(t('error.message_send_failed', { gameName: retry.name }), error);
-                        });
-                    }
-                }, 3000);
-                return;
-            }
-
-            // 同じゲームが既に通知されているかチェック
-            const notified = notifiedGames.get(playing.name);
-            if (notified) {
-                console.log(t('info.already_notified', { gameName: playing.name, userId: notified.userId }));
-                return;
-            }
-
-            // 通知記録に追加
-            notifiedGames.set(playing.name, {
-                userId: member.id,
-                timestamp: Date.now()
-            });
-
-            const textChannel =
-                newState.guild.channels.cache.get(TEXT_CHANNEL_ID);
-
-            if (!textChannel) {
-                console.error(t('error.channel_not_found', { channelId: TEXT_CHANNEL_ID }));
-                return;
-            }
-
-            if (textChannel.type !== ChannelType.GuildText) {
-                console.error(t('error.channel_not_text', { channelId: TEXT_CHANNEL_ID, type: textChannel.type }));
-                return;
-            }
-
-            textChannel.send(
-                t('message.gaming', { displayName: member.displayName, gameName: playing.name })
-            ).catch((error) => {
-                console.error(t('error.message_send_failed', { gameName: playing.name }), error);
-            });
-        }
+        handleVoiceStateUpdate(oldState, newState, {
+            notifiedGames,
+            t,
+            TEXT_CHANNEL_ID,
+            ActivityType,
+            ChannelType
+        });
     } catch (error) {
         console.error(t('error.voice_state_update_failed'), error);
     }
