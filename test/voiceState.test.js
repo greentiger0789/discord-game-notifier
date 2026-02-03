@@ -43,12 +43,13 @@ describe('voiceStateUpdate handler', () => {
 
         assert.strictEqual(sent.length, 1);
         assert.ok(sent[0].includes('Alice is playing VALORANT'));
-        assert.strictEqual(notifiedGames.has('VALORANT'), true);
+        assert.strictEqual(notifiedGames.has('u1'), true);
+        assert.ok(notifiedGames.get('u1').has('VALORANT'));
     });
 
     it('does not resend if game already notified', () => {
         const notifiedGames = new Map();
-        notifiedGames.set('VALORANT', { userId: 'u1', timestamp: Date.now() });
+        notifiedGames.set('u1', new Set(['VALORANT']));
         const sent = [];
         const textChannel = { type: 'GUILD_TEXT', send: (msg) => { sent.push(msg); return Promise.resolve(); } };
 
@@ -74,10 +75,10 @@ describe('voiceStateUpdate handler', () => {
         assert.strictEqual(sent.length, 0);
     });
 
-    it('clears notifications for user on leave when not playing', () => {
+    it('clears notifications for user on leave', () => {
         const notifiedGames = new Map();
-        notifiedGames.set('VALORANT', { userId: 'u1', timestamp: Date.now() });
-        notifiedGames.set('OTHER', { userId: 'u2', timestamp: Date.now() });
+        notifiedGames.set('u1', new Set(['VALORANT']));
+        notifiedGames.set('u2', new Set(['OTHER']));
 
         const oldState = {
             channelId: 'vc1',
@@ -95,7 +96,7 @@ describe('voiceStateUpdate handler', () => {
             ChannelType: { GuildText: 'GUILD_TEXT' }
         });
 
-        assert.strictEqual(notifiedGames.has('VALORANT'), false);
-        assert.strictEqual(notifiedGames.has('OTHER'), true);
+        assert.strictEqual(notifiedGames.has('u1'), false);
+        assert.strictEqual(notifiedGames.has('u2'), true);
     });
 });

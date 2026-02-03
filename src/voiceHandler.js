@@ -11,18 +11,13 @@ export async function handleVoiceStateUpdate(oldState, newState, options = {}) {
     // 退出: 旧チャネルがあり新チャネルがない場合
     if (oldState?.channelId && !newState?.channelId) {
         const member = oldState.member;
-        if (!member?.presence) return;
+        if (!member) return;
 
-        const playing = member.presence.activities.find(a => a.type === ActivityType.Playing);
-
-        // プレイしていない場合はそのユーザーに関する通知記録を全て削除
-        if (!playing) {
-            for (const [gameName, notified] of notifiedGames.entries()) {
-                if (notified.userId === member.id) {
-                    notifiedGames.delete(gameName);
-                    console.log(t('info.notification_cleared', { gameName, displayName: member.displayName }));
-                }
-            }
+        // そのユーザーが通知済みゲームを記録していれば削除
+        if (notifiedGames.has(member.id)) {
+            const userGames = notifiedGames.get(member.id);
+            notifiedGames.delete(member.id);
+            console.log(t('info.notification_cleared', { gameName: Array.from(userGames).join(', '), displayName: member.displayName }));
         }
         return;
     }
@@ -33,16 +28,20 @@ export async function handleVoiceStateUpdate(oldState, newState, options = {}) {
         if (!member) return;
 
         const sendNotification = (gameName, channelName) => {
-            const notified = notifiedGames.get(gameName);
-            if (notified) {
-                console.log(t('info.already_notified', { gameName, userId: notified.userId }));
+            // ユーザーIDをキーに、通知済みゲーム名のSetを保持する構造に変更
+            const userNotifications = notifiedGames.get(member.id);
+
+            if (userNotifications && userNotifications.has(gameName)) {
+                console.log(t('info.already_notified', { gameName, userId: member.id }));
                 return;
             }
 
-            notifiedGames.set(gameName, {
-                userId: member.id,
-                timestamp: Date.now()
-            });
+            // このユーザーのゲーム通知記録を初期化または更新
+            if (!userNotifications) {
+                notifiedGames.set(member.id, new Set([gameName]));
+            } else {
+                userNotifications.add(gameName);
+            }
 
             const textChannel = newState.guild.channels.cache.get(TEXT_CHANNEL_ID);
             if (!textChannel) {
