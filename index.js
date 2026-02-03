@@ -46,7 +46,7 @@ const client = new Client({
     ]
 });
 
-// 通知済みゲームを追跡 (ゲーム名 -> {userId, timestamp})
+// 通知済みゲームを追跡 (userId -> Set<gameName>)
 const notifiedGames = new Map();
 
 client.once('clientReady', () => {
