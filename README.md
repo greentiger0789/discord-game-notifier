@@ -86,10 +86,10 @@ The test suite runs the checks in the `test/` directory (locale file smoke tests
 
 ## Technologies Used
 
-- **discord.js** v14.14.1 - Discord API Client
-- **dotenv** v16.4.1 - Environment Variable Management
-- **i18next** v23.7.6 - Internationalization (i18n) Library
-- **Node.js** 20 (Docker)
+- **discord.js** v14.25.1 - Discord API Client
+- **dotenv** v16.6.1 - Environment Variable Management
+- **i18next** v23.16.8 - Internationalization (i18n) Library
+- **Node.js** 25 (Docker)
 
 ## How It Works
 
