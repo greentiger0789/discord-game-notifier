@@ -86,10 +86,10 @@ docker run --rm discord-game-notifier:test npm test
 
 ## 使用技術
 
-- **discord.js** v14.14.1 - Discord API クライアント
-- **dotenv** v16.4.1 - 環境変数管理
-- **i18next** v23.7.6 - 国際化（i18n）ライブラリ
-- **Node.js** 20 (Docker)
+- **discord.js** v14.25.1 - Discord API クライアント
+- **dotenv** v16.6.1 - 環境変数管理
+- **i18next** v23.16.8 - 国際化（i18n）ライブラリ
+- **Node.js** 25 (Docker)
 
 ## 動作原理
 

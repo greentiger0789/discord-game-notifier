@@ -8,8 +8,8 @@
         "test": "node --test"
     },
     "dependencies": {
-        "discord.js": "^14.14.1",
-        "dotenv": "^16.4.1",
-        "i18next": "^23.7.6"
+        "discord.js": "^14.25.1",
+        "dotenv": "^16.6.1",
+        "i18next": "^23.16.8"
     }
 }
